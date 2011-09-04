@@ -59,7 +59,7 @@ class Build
   	rs_dir = "sqshed_apps"
   	storage = Fog::Storage.new(:provider => 'Rackspace', :rackspace_auth_url => config["rackspace_auth_url"], :rackspace_api_key => config["rackspace_api_key"], :rackspace_username => config['rackspace_username'])
     directory = storage.directories.get(rs_dir)
-    directory.files.create(:key => "#{img}", :body => File.open("/var/build/#{name}/#{name}-#{version}.tar.gz"))
+    directory.files.create(:key => "#{name}-#{version}.tar.gz", :body => File.open("/var/build/#{name}/#{name}-#{version}.tar.gz"))
     FileUtils.rm_rf("/var/build/#{name}/#{name}-#{version}.tar.gz") if File.exist?("/var/build/#{name}/#{name}-#{version}.tar.gz")
   end
 
