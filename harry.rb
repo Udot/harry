@@ -36,7 +36,6 @@ class Build
     puts "cloning"
     self.version = next_version
     FileUtils.mkdir("/var/build/#{name}/#{name}") unless File.exist?("/var/build/#{name}/#{name}")
-    FileUtils.rm_rf("/var/build/#{name}/#{name}/#{version}") if File.exist?("/var/build/#{name}/#{name}/#{version}")
     Dir.chdir("/var/build/#{name}/#{name}")
     clone_shallow = `git clone --depth 1 #{repository} #{version}`
     FileUtils.rm_rf("#{version}/.git")
@@ -44,7 +43,7 @@ class Build
     Dir.chdir("/var/build/#{name}/#{name}/#{version}")
     log = `bundle install --deployment --without development test`
     Dir.chdir("/var/build/#{name}")
-    bundle 'archive'
+    puts 'archive'
     log = `tar -czf /var/build/#{name}/#{name}-#{version}.tar.gz #{name}`
     FileUtils.rm_rf("/var/build/#{name}/#{name}/#{version}")
   end
