@@ -39,12 +39,12 @@ class Build
     Dir.chdir("/var/build/#{name}/#{name}")
     clone_shallow = `git clone --depth 1 #{repository} #{version}`
     FileUtils.rm_rf("#{version}/.git")
-    puts "bundle"
+    puts "bundle in /var/build/#{name}/#{name}/#{version}"
     Dir.chdir("/var/build/#{name}/#{name}/#{version}")
-    `bundle install --deployment --without development test`
+    log = `bundle install --deployment --without development test`
     Dir.chdir("/var/build/#{name}")
     bundle 'archive'
-    `tar -czf /var/build/#{name}/#{name}-#{version}.tar.gz #{name}`
+    log = `tar -czf /var/build/#{name}/#{name}-#{version}.tar.gz #{name}`
     FileUtils.rm_rf("/var/build/#{name}/#{name}/#{version}")
   end
 
