@@ -10,6 +10,7 @@ require "redis"
 class Build
   attr_accessor :name, :repository, :version, :bundler
   def initialize(name, repository, bundler = true)
+    puts "init"
     @name = name
     @repository = repository
     @current_path = File.expand_path(File.dirname(__FILE__))
@@ -32,19 +33,23 @@ class Build
   end
 
   def run
+    puts "cloning"
     self.version = next_version
     FileUtils.mkdir("/var/build/#{name}/#{name}") unless File.exist?("/var/build/#{name}/#{name}")
     Dir.chdir("/var/build/#{name}/#{name}")
     clone_shallow = `git clone --depth 1 #{repository} #{version}`
     FileUtils.rm_rf("#{version}/.git")
+    puts "bundle"
     Dir.chdir("/var/build/#{name}/#{name}/#{version}")
     `bundle install --deployment --without development test`
     Dir.chdir("/var/build/#{name}")
+    bundle 'archive'
     `tar -czf /var/build/#{name}/#{name}-#{version}.tar.gz #{name}`
     FileUtils.rm_rf("/var/build/#{name}/#{name}/#{version}")
   end
 
   def save
+    puts "saving"
     repositories = YAML.load_file(@current_path + "/repositories.yml")
     repositories[name] = {"name" => name, "repository" => repository, "version" => version}
     FileUtils.mkdir(@current_path + "/config") unless File.exist?(@current_path + "/config")
@@ -54,6 +59,7 @@ class Build
   end
 
   def upload
+    puts "uploading"
     current_path = File.expand_path(File.dirname(__FILE__))
   	config = YAML.load_file(current_path + "/config.yml")
   	rs_dir = "sqshed_apps"
@@ -64,6 +70,7 @@ class Build
   end
 
   def register
+    puts "register"
     current_path = File.expand_path(File.dirname(__FILE__))
   	config = YAML.load_file(current_path + "/config.yml")
   	#  {"version" => integer,      # the version number
@@ -102,7 +109,7 @@ class Harry < Sinatra::Application
       push = JSON.parse(params[:payload])
       build = Build.new(push["repository"]["name"], push["repository"]["url"].gsub(/^http/, 'git'), params[:bundler])
     else
-      logger.info("Received #{params[:name]} #{params[:repository]}")
+      puts "Received #{params[:name]} #{params[:repository]}"
       build = Build.new(params[:name], params[:repository], params[:bundler])
     end
     fork do
