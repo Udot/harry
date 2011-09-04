@@ -82,14 +82,14 @@ class Build
 end
 
 class Harry < Sinatra::Application
-  @current_path = File.expand_path(File.dirname(__FILE__))
-	@config = YAML.load_file(@current_path + "/config.yml")
 
   get '/' do
     "ready to build ! sir"
   end
 
   post '/' do
+    @current_path = File.expand_path(File.dirname(__FILE__))
+  	@config = YAML.load_file(@current_path + "/config.yml")
     token = env['HTTP_TOKEN'] || env['TOKEN']
     if token != @config['token']
       status 403
