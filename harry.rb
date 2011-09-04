@@ -83,9 +83,11 @@ class Build
     #     "db" => {"hostname" => string, "database" => string, "username" => string, "token" => string}
     #   }
     # }
-    status_hash = {"version" => version, "name" => name, "status" => "waiting", "started_at" => Time.now, "finished_at" => "", "backoffice" => true}
-    redis = Redis.new(:host => config['redis']['host'], :port => config['redis']['port'], :password => config['redis']['password'], :db => config['redis']['database'])
-    redis.set(config['cuddy_token'], status_hash)
+    status_hash = {"version" => version, "name" => name, "status" => "waiting", "started_at" => Time.now.to_s, "finished_at" => "", "side" => "backoffice"}
+    redis = Redis.new(:host => config['redis']['host'], :port => config['redis']['port'], :password => config['redis']['password'], :db => config['redis']['db'])
+    queue = JSON.parse(redis.get(config['cuddy_token']))
+    queue << status_hash
+    redis.set(config['cuddy_token'], queue.to_json)
   end
 end
 
