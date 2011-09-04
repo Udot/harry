@@ -91,6 +91,10 @@ end
 
 class Harry < Sinatra::Application
 	enable :logging
+	configure do 
+    Log = Logger.new("sinatra.log")
+    Log.level  = Logger::INFO 
+  end
 
   get '/' do
     "ready to build ! sir"
