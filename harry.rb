@@ -43,8 +43,8 @@ class Build
     Dir.chdir("/var/build/#{name}/#{version}")
     log = `bundle install --deployment --without development test`
     Dir.chdir("/var/build/#{name}")
-    puts 'archive : /var/build/#{name}-#{version}.tar.gz'
-    log = `tar -czf /var/build/#{name}-#{version}.tar.gz #{version}`
+    puts "archive : /var/build/#{name}/#{name}-#{version}.tar.gz"
+    log = `tar -czf /var/build/#{name}/#{name}-#{version}.tar.gz #{version}`
     FileUtils.rm_rf("/var/build/#{name}/#{version}")
   end
 
