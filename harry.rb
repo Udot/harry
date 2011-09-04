@@ -14,7 +14,8 @@ class Build
     @repository = repository
     @current_path = File.expand_path(File.dirname(__FILE__))
     @bundler = bundler
-    repositories = YAML.load_file(@current_path + "/repositories.yml")
+    repositories = Hash.new
+    repositories = YAML.load_file(@current_path + "/repositories.yml") if File.exist?(@current_path + "/repositories.yml")
     if repositories[name] == nil
       repositories[name] = {"name" => name, "repository" => repository, "version" => "0.1"}
       File.open(@current_path + "/repositories.yml", 'w' ) do |out|
