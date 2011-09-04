@@ -47,6 +47,7 @@ class Build
   def save
     repositories = YAML.load_file(@current_path + "/repositories.yml")
     repositories[name] = {"name" => name, "repository" => repository, "version" => version}
+    FileUtils.mkdir(@current_path + "/config") unless File.exist?(@current_path + "/config")
     File.open(@current_path + "/config/repositories.yml", 'w' ) do |out|
       YAML.dump(repositories, out)
     end
