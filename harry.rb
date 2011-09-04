@@ -27,9 +27,8 @@ class Build
 
   def next_version
     version_n = version.split('.')
-    splits = version_n.size
-    splits.last = (splits.last.to_i + 1).to_s
-    return splits.join('.')
+    version_n.last = (version_n.last.to_i + 1).to_s
+    return version_n.join('.')
   end
 
   def run
