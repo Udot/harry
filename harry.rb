@@ -83,6 +83,7 @@ class Build
 end
 
 class Harry < Sinatra::Application
+	enable :logging
 
   get '/' do
     "ready to build ! sir"
@@ -101,7 +102,8 @@ class Harry < Sinatra::Application
       push = JSON.parse(params[:payload])
       build = Build.new(push["repository"]["name"], push["repository"]["url"].gsub(/^http/, 'git'), params[:bundler])
     else
-      build = Build.new(params[:name], params[:url], params[:bundler])
+      logger.info("Received #{params[:name]} #{params[:repository]}")
+      build = Build.new(params[:name], params[:repository], params[:bundler])
     end
     fork do
       build.run
