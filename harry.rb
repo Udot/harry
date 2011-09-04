@@ -27,7 +27,7 @@ class Build
 
   def next_version
     version_n = version.split('.')
-    version_n.last = (version_n.last.to_i + 1).to_s
+    version_n[-1] = (version_n.last.to_i + 1).to_s
     return version_n.join('.')
   end
 
