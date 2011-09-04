@@ -119,11 +119,12 @@ class Harry < Sinatra::Application
       puts "Received #{params[:name]} #{params[:repository]}"
       build = Build.new(params[:name], params[:repository], params[:bundler])
     end
+    non_unicorn = ["cuddy"]
     fork do
       build.run
       build.save
       build.upload
-      build.register
+      build.register unless non_unicorn.include?(params[:name])
     end
     status 200
   end
