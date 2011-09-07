@@ -77,12 +77,11 @@ class Build
     #   "status" => string,         # starts with "waiting"
     #   "started_at" => datetime,   # the time when the app was added in the queue
     #   "finished_at" => datetime,  # the time when the app was properly deployed
-    #   "backoffice" => boolean     # hoy
-    #   "config" => { "unicorn" => { "workers" => integer },
-    #     "db" => {"hostname" => string, "database" => string, "username" => string, "token" => string}
+    #   "backoffice" => boolean,     # hoy
+    #   "db_string" => "ALREADY_DONE",  # used to pass db string
     #   }
     # }
-    status_hash = {"version" => version, "name" => name, "status" => "waiting", "started_at" => Time.now.to_s, "finished_at" => "", "side" => "backoffice"}
+    status_hash = {"db_string" => "ALREADY_DONE", "version" => version, "name" => name, "status" => "waiting", "started_at" => Time.now.to_s, "finished_at" => "", "backoffice" => "1"}
     redis = Redis.new(:host => config['redis']['host'], :port => config['redis']['port'], :password => config['redis']['password'], :db => config['redis']['db'])
     queue = JSON.parse(redis.get(config['cuddy_token'])) if redis.get(config['cuddy_token'])
     queue ||= Array.new
@@ -119,8 +118,10 @@ class Harry < Sinatra::Application
       build = Build.new(params[:name], params[:repository], params[:bundler])
     end
     if (params[:no_rebuild] && (params[:no_rebuild].to_i == 1))
+      puts "Only registering"
       fork { build.register unless params[:no_register] }
     else
+      puts "Full build"
       fork do
         build.run
         build.save
