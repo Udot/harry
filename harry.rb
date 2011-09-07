@@ -16,10 +16,11 @@ class Build
     @current_path = File.expand_path(File.dirname(__FILE__))
     @bundler = bundler
     repositories = Hash.new
-    repositories = YAML.load_file(@current_path + "/repositories.yml") if File.exist?(@current_path + "/repositories.yml")
+    repositories = YAML.load_file(@current_path + "/config/repositories.yml") if File.exist?(@current_path + "/config/repositories.yml")
     if repositories[name] == nil
-      repositories[name] = {"name" => name, "repository" => repository, "version" => "0.1"}
-      File.open(@current_path + "/repositories.yml", 'w' ) do |out|
+      repositories[name] = {"name" => name, "repository" => repository, "version" => "1"}
+      FileUtils.mkdir(@current_path + "/config") unless File.exist?(@current_path + "/config")
+      File.open(@current_path + "/config/repositories.yml", 'w' ) do |out|
         YAML.dump(repositories, out)
       end
     end
@@ -27,9 +28,7 @@ class Build
   end
 
   def next_version
-    version_n = version.split('.')
-    version_n[-1] = (version_n.last.to_i + 1).to_s
-    return version_n.join('.')
+    return version + 1
   end
 
   def run
@@ -50,7 +49,7 @@ class Build
 
   def save
     puts "saving"
-    repositories = YAML.load_file(@current_path + "/repositories.yml")
+    repositories = YAML.load_file(@current_path + "/config/repositories.yml") if File.exist?(@current_path + "/config/repositories.yml")
     repositories[name] = {"name" => name, "repository" => repository, "version" => version}
     FileUtils.mkdir(@current_path + "/config") unless File.exist?(@current_path + "/config")
     File.open(@current_path + "/config/repositories.yml", 'w' ) do |out|
