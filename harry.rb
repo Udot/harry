@@ -118,7 +118,7 @@ class Harry < Sinatra::Application
       puts "Received #{params[:name]} #{params[:repository]}"
       build = Build.new(params[:name], params[:repository], params[:bundler])
     end
-    if (params[:no_rebuild] && (params[:no_rebuild] == 1))
+    if (params[:no_rebuild] && (params[:no_rebuild].to_i == 1))
       fork { build.register unless params[:no_register] }
     else
       fork do
