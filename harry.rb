@@ -36,6 +36,7 @@ class Build
     self.version = next_version
     FileUtils.mkdir("/var/build/#{name}") unless File.exist?("/var/build/#{name}")
     Dir.chdir("/var/build/#{name}")
+    FileUtils.rm_rf("/var/build/#{name}/#{version}") if File.exist?("/var/build/#{name}/#{version}")
     clone_shallow = `git clone --depth 1 #{repository} #{version}`
     FileUtils.rm_rf("#{version}/.git")
     puts "bundle in /var/build/#{name}/#{version}"
