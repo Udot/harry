@@ -28,7 +28,7 @@ class Build
   end
 
   def next_version
-    return version + 1
+    return (version.to_i + 1).to_s
   end
 
   def run
